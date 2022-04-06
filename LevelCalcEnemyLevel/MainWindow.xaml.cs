@@ -13,7 +13,6 @@ namespace LevelCalcEnemyLevel
 
         static int incrementHolder = 0;
         static int[,] levelTable = new int[714, 2];
-        static int[] levelTableIncrementally = new int[714];
         public MainWindow()
         {
             InitializeComponent();
@@ -86,7 +85,7 @@ namespace LevelCalcEnemyLevel
             for (int i = 1; i < levelTable.GetLength(0); i++)
             {
                 decimal percentageOf = recievedRunes / percentChange * 100; //takes percentage of the runes and finds the value of 100% of them as close as possible
-                if (percentageOf < levelTable[i,0] && percentageOf + 50 > levelTable[i,0]) //finds values within range of above value
+                if (percentageOf <= levelTable[i,0] && percentageOf + 50 >= levelTable[i,0]) //finds values within range of above value
                     levelsFound += $"Player Level: {i}\n";
             }
             if (levelsFound == "")
