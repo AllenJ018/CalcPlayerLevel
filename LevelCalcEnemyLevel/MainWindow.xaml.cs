@@ -35,6 +35,7 @@ namespace LevelCalcEnemyLevel
 
         private void enemyLevelCalcButton_Click(object sender, RoutedEventArgs e)
         {
+            int percent = 1;
             decimal recievedRunes = 0;
             try
             {
@@ -44,19 +45,26 @@ namespace LevelCalcEnemyLevel
             {
                 MessageBox.Show("Error: Please enter a number");
             }
-            levelTextBlock.Text = FindLevel(recievedRunes);
+            percent = findPercentNeeded();
+            levelTextBlock.Text = FindLevel(recievedRunes, percent);
         }
 
         private void runeCalcButton_Click(object sender, RoutedEventArgs e)
         {
+            int currentLevel = 0, desiredLevel = 0, currentRunes = 0, runesRequired = 0;
             try
             {
-
+                currentLevel = int.Parse(currentLevelTextBox.Text);
+                desiredLevel = int.Parse(desiredLevelTextBox.Text);
+                currentRunes = int.Parse(currentRunesTextBox.Text);
             }
             catch
             {
-
+                MessageBox.Show("Error: Please enter a whole number");
             }
+            runesRequired = levelTable[desiredLevel, 1] + currentRunes - levelTable[currentLevel, 1];
+            runesToReachLevel.Text = $"Level Desired: {desiredLevel}\n" +
+                                     $"Runes required: {runesRequired:n0}";
         }
         private static void CreateTables()
         {
@@ -76,7 +84,7 @@ namespace LevelCalcEnemyLevel
 
                 int currentLevelMath = (int)(0.02 * Math.Pow((i + 1), 3) + 3.06 * Math.Pow((i + 1), 2) + 105.6 * (i + 1) - 895);
                 levelTable[i,0] = currentLevelMath;
-                Debug.WriteLine($"Player level: {i} runes required: {levelTable[i, 0]}");
+               // Debug.WriteLine($"Player level: {i} runes required: {levelTable[i, 0]}");
             }
             for (int i = 1; i < levelTable.GetLength(0); i++)
             {
@@ -84,18 +92,46 @@ namespace LevelCalcEnemyLevel
                 levelTable[i,1] = incrementHolder;
             }
         }
-        private static string FindLevel(decimal recievedRunes)
+        private static string FindLevel(decimal recievedRunes, int percentChange)
         {
+
             string levelsFound= "";
             for (int i = 1; i < levelTable.GetLength(0); i++)
             {
-                decimal fourPercent = recievedRunes / 4 * 100;
-                if (fourPercent < levelTable[i,0] && fourPercent + 50 > levelTable[i,0])
+                decimal percentageOf = recievedRunes / percentChange * 100; //takes percentage of the runes and finds the value of 100% of them as close as possible
+                if (percentageOf < levelTable[i,0] && percentageOf + 50 > levelTable[i,0]) //finds values within range of above value
                     levelsFound += $"Player Level: {i}\n";
             }
             if (levelsFound == "")
                 levelsFound = "Invalid Rune Level";
             return levelsFound;
+        }
+
+        private int findPercentNeeded()
+        {
+            try
+            {
+                if ((bool)hostRadioButton.IsChecked)
+                    return 15;
+
+                else if ((bool)coopRadioButton.IsChecked || (bool)hunterRadioButton.IsChecked)
+                    return 5;
+                else if ((bool)invaderRadioButton.IsChecked)
+                    return 4;
+
+                else if ((bool)duelistHostRadioButton.IsChecked)
+                    return 2;
+
+                else if ((bool)duelistRadioButton.IsChecked || (bool)duelistCoopRadioButton.IsChecked)
+                    return 1;
+                else
+                    throw new Exception();
+            }
+            catch
+            {
+                MessageBox.Show("Error: Please choose role you are playing");
+                return 1;
+            }
         }
 
     }
