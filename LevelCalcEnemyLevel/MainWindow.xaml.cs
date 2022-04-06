@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 
 namespace LevelCalcEnemyLevel
@@ -34,9 +35,6 @@ namespace LevelCalcEnemyLevel
 
         private void enemyLevelCalcButton_Click(object sender, RoutedEventArgs e)
         {
-            
-            //style = NumberStyles.Number | NumberStyles.AllowCurrencySymbol;
-            //culture = CultureInfo.CreateSpecificCulture("en-US");
             decimal recievedRunes = 0;
             try
             {
@@ -46,7 +44,7 @@ namespace LevelCalcEnemyLevel
             {
                 MessageBox.Show("Error: Please enter a number");
             }
-            FindLevel(recievedRunes);
+            levelTextBlock.Text = FindLevel(recievedRunes);
         }
 
         private void runeCalcButton_Click(object sender, RoutedEventArgs e)
@@ -78,6 +76,7 @@ namespace LevelCalcEnemyLevel
 
                 int currentLevelMath = (int)(0.02 * Math.Pow((i + 1), 3) + 3.06 * Math.Pow((i + 1), 2) + 105.6 * (i + 1) - 895);
                 levelTable[i,0] = currentLevelMath;
+                Debug.WriteLine($"Player level: {i} runes required: {levelTable[i, 0]}");
             }
             for (int i = 1; i < levelTable.GetLength(0); i++)
             {
@@ -85,14 +84,18 @@ namespace LevelCalcEnemyLevel
                 levelTable[i,1] = incrementHolder;
             }
         }
-        private static void FindLevel(decimal recievedRunes)
+        private static string FindLevel(decimal recievedRunes)
         {
+            string levelsFound= "";
             for (int i = 1; i < levelTable.GetLength(0); i++)
             {
                 decimal fourPercent = recievedRunes / 4 * 100;
                 if (fourPercent < levelTable[i,0] && fourPercent + 50 > levelTable[i,0])
-                    Console.WriteLine($"Player Level: {i}");
+                    levelsFound += $"Player Level: {i}\n";
             }
+            if (levelsFound == "")
+                levelsFound = "Invalid Rune Level";
+            return levelsFound;
         }
 
     }
