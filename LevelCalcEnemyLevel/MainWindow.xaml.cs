@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 
 namespace LevelCalcEnemyLevel
 {
@@ -32,15 +34,19 @@ namespace LevelCalcEnemyLevel
 
         private void enemyLevelCalcButton_Click(object sender, RoutedEventArgs e)
         {
+            
+            //style = NumberStyles.Number | NumberStyles.AllowCurrencySymbol;
+            //culture = CultureInfo.CreateSpecificCulture("en-US");
+            decimal recievedRunes = 0;
             try
             {
-              decimal  recievedRunes = decimal.Parse(currentLevelTextBox.Text);
-                FindLevel(recievedRunes);
+                recievedRunes = decimal.Parse(runesGainedTextBox.Text);
             }
             catch
             {
                 MessageBox.Show("Error: Please enter a number");
             }
+            FindLevel(recievedRunes);
         }
 
         private void runeCalcButton_Click(object sender, RoutedEventArgs e)
@@ -73,7 +79,7 @@ namespace LevelCalcEnemyLevel
                 int currentLevelMath = (int)(0.02 * Math.Pow((i + 1), 3) + 3.06 * Math.Pow((i + 1), 2) + 105.6 * (i + 1) - 895);
                 levelTable[i,0] = currentLevelMath;
             }
-            for (int i = 1; i < levelTable.Length; i++)
+            for (int i = 1; i < levelTable.GetLength(0); i++)
             {
                 incrementHolder += levelTable[i,0];
                 levelTable[i,1] = incrementHolder;
@@ -81,7 +87,7 @@ namespace LevelCalcEnemyLevel
         }
         private static void FindLevel(decimal recievedRunes)
         {
-            for (int i = 1; i < levelTable.Length; i++)
+            for (int i = 1; i < levelTable.GetLength(0); i++)
             {
                 decimal fourPercent = recievedRunes / 4 * 100;
                 if (fourPercent < levelTable[i,0] && fourPercent + 50 > levelTable[i,0])
